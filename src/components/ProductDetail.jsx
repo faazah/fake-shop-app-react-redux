@@ -2,20 +2,18 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom"
-import { removeSelectedProduct, selectedProduct } from "../redux/e-comm/action";
+import { fetchProductById, removeSelectedProduct, selectedProduct } from "../redux/e-comm/action";
 
 export const ProductDetail = () => {
     const dispatch = useDispatch();
     const product = useSelector((store) => store.product);
-    // console.log(product);
     const { image, title, price, category, description } = product;
     const params = useParams();
-    // console.log(params);
     const { productId } = params;
 
     useEffect(() => {
         if (productId && productId !== '')
-            fetchProductDetail();
+            dispatch(fetchProductById(productId));
 
         //This return function only works when their is unmounting happening 
         return () =>{ 
@@ -23,13 +21,6 @@ export const ProductDetail = () => {
         }
     }, [productId])
 
-    const fetchProductDetail = async () => {
-        const response = await axios.get(`https://fakestoreapi.com/products/${productId}`).catch((err) => {
-            console.log('Err:', err);
-        })
-        // console.log(response.data);
-        dispatch(selectedProduct(response.data));
-    }
     return (
         <div className="ui grid container" style={{ marginTop: '100px' }}>
             {Object.keys(product).length === 0 ? ( //Object.keys(objName) ===> returns an array of keys
